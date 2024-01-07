@@ -30,11 +30,11 @@ public interface PromiseMappers {
         Promise<Tuple1<T1>> identity();
 
         default <R> Promise<R> map(Function1<R, T1> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function1<Promise<R>, T1> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -42,11 +42,11 @@ public interface PromiseMappers {
         Promise<Tuple2<T1, T2>> identity();
 
         default <R> Promise<R> map(Function2<R, T1, T2> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function2<Promise<R>, T1, T2> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -54,11 +54,11 @@ public interface PromiseMappers {
         Promise<Tuple3<T1, T2, T3>> identity();
 
         default <R> Promise<R> map(Function3<R, T1, T2, T3> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function3<Promise<R>, T1, T2, T3> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -66,11 +66,11 @@ public interface PromiseMappers {
         Promise<Tuple4<T1, T2, T3, T4>> identity();
 
         default <R> Promise<R> map(Function4<R, T1, T2, T3, T4> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function4<Promise<R>, T1, T2, T3, T4> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -78,11 +78,11 @@ public interface PromiseMappers {
         Promise<Tuple5<T1, T2, T3, T4, T5>> identity();
 
         default <R> Promise<R> map(Function5<R, T1, T2, T3, T4, T5> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function5<Promise<R>, T1, T2, T3, T4, T5> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -90,11 +90,11 @@ public interface PromiseMappers {
         Promise<Tuple6<T1, T2, T3, T4, T5, T6>> identity();
 
         default <R> Promise<R> map(Function6<R, T1, T2, T3, T4, T5, T6> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function6<Promise<R>, T1, T2, T3, T4, T5, T6> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -102,11 +102,11 @@ public interface PromiseMappers {
         Promise<Tuple7<T1, T2, T3, T4, T5, T6, T7>> identity();
 
         default <R> Promise<R> map(Function7<R, T1, T2, T3, T4, T5, T6, T7> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function7<Promise<R>, T1, T2, T3, T4, T5, T6, T7> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -114,11 +114,11 @@ public interface PromiseMappers {
         Promise<Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>> identity();
 
         default <R> Promise<R> map(Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function8<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 
@@ -126,11 +126,11 @@ public interface PromiseMappers {
         Promise<Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> identity();
 
         default <R> Promise<R> map(Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
-            return identity().map(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise());
         }
 
         default <R> Promise<R> flatMap(Function9<Promise<R>, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper) {
-            return identity().flatMap(tuple -> tuple.map(mapper));
+            return identity().flatMap(tuple -> tuple.map(mapper).toPromise().flatMap(Function1.identity()));
         }
     }
 }

@@ -252,6 +252,17 @@ public interface Promise<T> {
         }
 
         @Override
+        public <U> @NotNull Promise<U> map(Cause cause, Function1<U, ? super T> mapper) {
+            if (value != null) { return new PromiseImpl<>(value.map(cause, mapper)); }
+
+            var promise = new PromiseImpl<U>(null);
+
+            push(new CompletionAction<>(result -> promise.resolve(result.map(cause, mapper)), promise));
+
+            return promise;
+        }
+
+        @Override
         @SuppressWarnings("unchecked")
         public <U> Promise<U> flatMap(Function1<Promise<U>, ? super T> mapper) {
             if (value != null) { return value.fold(__ -> new PromiseImpl<>((Result<U>) value), mapper); }
@@ -454,6 +465,8 @@ public interface Promise<T> {
     // ----- Transformational Methods -----
 
     <U> Promise<U> map(Function1<U, ? super T> mapper);
+
+    <U> Promise<U> map(Cause cause, Function1<U, ? super T> mapper);
 
     default <U> Promise<U> map(Function0<U> mapper) {
         return map(__ -> mapper.apply());

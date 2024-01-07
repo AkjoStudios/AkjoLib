@@ -33,19 +33,19 @@ public interface Tuple {
     // ----- Tuple Variants (0-9) -----
 
     interface Tuple0 extends Tuple {
-        <T> T map(Functions.Function0<T> mapper);
+        <T> Result<T> map(Functions.Function0<T> mapper);
 
         default int size() { return 0; }
     }
 
     interface Tuple1<T1> extends Tuple {
-        <T> T map(Functions.Function1<T, T1> mapper);
+        <T> Result<T> map(Functions.Function1<T, T1> mapper);
 
         default int size() { return 1; }
     }
 
     interface Tuple2<T1, T2> extends Tuple {
-        <T> T map(Functions.Function2<T, T1, T2> mapper);
+        <T> Result<T> map(Functions.Function2<T, T1, T2> mapper);
 
         default int size() { return 2; }
 
@@ -54,43 +54,43 @@ public interface Tuple {
     }
 
     interface Tuple3<T1, T2, T3> extends Tuple {
-        <T> T map(Functions.Function3<T, T1, T2, T3> mapper);
+        <T> Result<T> map(Functions.Function3<T, T1, T2, T3> mapper);
 
         default int size() { return 3; }
     }
 
     interface Tuple4<T1, T2, T3, T4> extends Tuple {
-        <T> T map(Functions.Function4<T, T1, T2, T3, T4> mapper);
+        <T> Result<T> map(Functions.Function4<T, T1, T2, T3, T4> mapper);
 
         default int size() { return 4; }
     }
 
     interface Tuple5<T1, T2, T3, T4, T5> extends Tuple {
-        <T> T map(Functions.Function5<T, T1, T2, T3, T4, T5> mapper);
+        <T> Result<T> map(Functions.Function5<T, T1, T2, T3, T4, T5> mapper);
 
         default int size() { return 5; }
     }
 
     interface Tuple6<T1, T2, T3, T4, T5, T6> extends Tuple {
-        <T> T map(Functions.Function6<T, T1, T2, T3, T4, T5, T6> mapper);
+        <T> Result<T> map(Functions.Function6<T, T1, T2, T3, T4, T5, T6> mapper);
 
         default int size() { return 6; }
     }
 
     interface Tuple7<T1, T2, T3, T4, T5, T6, T7> extends Tuple {
-        <T> T map(Functions.Function7<T, T1, T2, T3, T4, T5, T6, T7> mapper);
+        <T> Result<T> map(Functions.Function7<T, T1, T2, T3, T4, T5, T6, T7> mapper);
 
         default int size() { return 7; }
     }
 
     interface Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> extends Tuple {
-        <T> T map(Functions.Function8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper);
+        <T> Result<T> map(Functions.Function8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper);
 
         default int size() { return 8; }
     }
 
     interface Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Tuple {
-        <T> T map(Functions.Function9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper);
+        <T> Result<T> map(Functions.Function9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper);
 
         default int size() { return 9; }
     }
@@ -104,11 +104,11 @@ public interface Tuple {
     ) { record tuple1<T1>(
                 T1 param1
     ) implements Tuple1<T1> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function1<T, T1> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1()
-            ); }
+            )); }
     } return new tuple1<>(
             param1
     ); }
@@ -122,12 +122,12 @@ public interface Tuple {
                 T1 param1,
                 T2 param2
     ) implements Tuple2<T1, T2> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function2<T, T1, T2> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2()
-            ); }
+            )); }
 
             @Contract(pure = true)
             public T1 first() { return param1(); }
@@ -150,13 +150,13 @@ public interface Tuple {
                 T2 param2,
                 T3 param3
     ) implements Tuple3<T1, T2, T3> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function3<T, T1, T2, T3> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3()
-            ); }
+            )); }
     } return new tuple3<>(
             param1,
             param2,
@@ -176,14 +176,14 @@ public interface Tuple {
                 T3 param3,
                 T4 param4
     ) implements Tuple4<T1, T2, T3, T4> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function4<T, T1, T2, T3, T4> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
                     param4()
-            ); }
+            )); }
     } return new tuple4<>(
             param1,
             param2,
@@ -206,15 +206,15 @@ public interface Tuple {
                 T4 param4,
                 T5 param5
     ) implements Tuple5<T1, T2, T3, T4, T5> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function5<T, T1, T2, T3, T4, T5> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
                     param4(),
                     param5()
-            ); }
+            )); }
     } return new tuple5<>(
             param1,
             param2,
@@ -240,16 +240,16 @@ public interface Tuple {
                 T5 param5,
                 T6 param6
     ) implements Tuple6<T1, T2, T3, T4, T5, T6> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function6<T, T1, T2, T3, T4, T5, T6> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
                     param4(),
                     param5(),
                     param6()
-            ); }
+            )); }
     } return new tuple6<>(
             param1,
             param2,
@@ -278,9 +278,9 @@ public interface Tuple {
                 T6 param6,
                 T7 param7
     ) implements Tuple7<T1, T2, T3, T4, T5, T6, T7> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function7<T, T1, T2, T3, T4, T5, T6, T7> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
@@ -288,7 +288,7 @@ public interface Tuple {
                     param5(),
                     param6(),
                     param7()
-            ); }
+            )); }
     } return new tuple7<>(
             param1,
             param2,
@@ -320,9 +320,9 @@ public interface Tuple {
                 T7 param7,
                 T8 param8
     ) implements Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function8<T, T1, T2, T3, T4, T5, T6, T7, T8> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
@@ -331,7 +331,7 @@ public interface Tuple {
                     param6(),
                     param7(),
                     param8()
-            ); }
+            )); }
     } return new tuple8<>(
             param1,
             param2,
@@ -366,9 +366,9 @@ public interface Tuple {
                 T8 param8,
                 T9 param9
     ) implements Tuple9<T1, T2, T3, T4, T5, T6, T7, T8, T9> {
-            public <T> T map(
+            public <T> Result<T> map(
                     @NotNull Functions.Function9<T, T1, T2, T3, T4, T5, T6, T7, T8, T9> mapper
-            ) { return mapper.apply(
+            ) { return Result.lift(() -> mapper.apply(
                     param1(),
                     param2(),
                     param3(),
@@ -378,7 +378,7 @@ public interface Tuple {
                     param7(),
                     param8(),
                     param9()
-            ); }
+            )); }
     } return new tuple9<>(
             param1,
             param2,

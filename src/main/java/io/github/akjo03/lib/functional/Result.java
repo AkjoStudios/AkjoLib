@@ -2,22 +2,25 @@ package io.github.akjo03.lib.functional;
 
 import io.github.akjo03.lib.functional.Result.Failure;
 import io.github.akjo03.lib.functional.Result.Success;
+import io.github.akjo03.lib.functional.async.Promise;
 import io.github.akjo03.lib.functional.util.AggregatedCause;
 import io.github.akjo03.lib.functional.util.Causes;
+import io.github.akjo03.lib.functional.util.SimpleCause;
 import io.github.akjo03.lib.validation.Validator;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.github.akjo03.lib.functional.Functions.Function0;
-import static io.github.akjo03.lib.functional.Functions.Function1;
-import static io.github.akjo03.lib.functional.Tuple.tuple;
+import static io.github.akjo03.lib.functional.Functions.*;
+import static io.github.akjo03.lib.functional.Tuple.*;
 import static io.github.akjo03.lib.functional.ResultMappers.*;
 
 /*
@@ -96,7 +99,10 @@ public sealed interface Result<T> permits Success, Failure {
     static <R> Result<R> lift(
             Cause cause,
             Function0<R> supplier
-    ) { return lift((Function1<? extends Cause, ? super Throwable>) __ -> cause, supplier); }
+    ) { return lift(
+            (Function1<? extends Cause, ? super Throwable>) e -> new SimpleCause(e.getMessage(), Option.present(cause)),
+            supplier
+    ); }
 
     static <R> Result<R> lift(
             Function0<R> supplier
@@ -313,6 +319,11 @@ public sealed interface Result<T> permits Success, Failure {
         return this;
     }
 
+    default Result<T> onResult(@NotNull Consumer<Result<T>> onResult) {
+        onResult.accept(this);
+        return this;
+    }
+
     default Result<T> onResultDo(@NotNull Runnable onResult) {
         onResult.run();
         return this;
@@ -356,6 +367,12 @@ public sealed interface Result<T> permits Success, Failure {
     // ----- Throwing Methods -----
 
     @SuppressWarnings("java:S1874")
+    default T orThrow() throws IllegalArgumentException {
+        if (isSuccess()) { return unwrap(); }
+        else { throw new IllegalArgumentException(fold(Cause::message, Functions::toNull)); }
+    }
+
+    @SuppressWarnings("java:S1874")
     default <E extends Throwable> T orThrow(E exception) throws E {
         if (isSuccess()) { return unwrap(); }
         else { throw exception; }
@@ -371,9 +388,13 @@ public sealed interface Result<T> permits Success, Failure {
 
     @SuppressWarnings("unchecked")
     default <R> Result<R> map(Function1<R, ? super T> mapper) {
-        return fold(__ -> (Result<R>) this, value -> success(mapper.apply(value)));
+        return fold(__ -> (Result<R>) this, value -> lift(() -> mapper.apply(value)));
     }
 
+    @SuppressWarnings("unchecked")
+    default <R> Result<R> map(Cause cause, Function1<R, ? super T> mapper) {
+        return fold(__ -> (Result<R>) this, value -> lift(cause, () -> mapper.apply(value)));
+    }
     default Result<T> mapFailure(Function1<Cause, ? super Cause> mapper) {
         return fold(cause -> mapper.apply(cause).result(), __ -> this);
     }
@@ -401,6 +422,10 @@ public sealed interface Result<T> permits Success, Failure {
         return fold(__ -> Optional.empty(), Optional::of);
     }
 
+    default Promise<T> toPromise() {
+        return fold(Promise::failed, Promise::successful);
+    }
+
     // ----- Conditional Methods -----
 
     default boolean isSuccess() {
@@ -423,6 +448,42 @@ public sealed interface Result<T> permits Success, Failure {
 
     default Result<T> filter(Function1<Cause, T> causeMapper, Predicate<T> predicate) {
         return fold(__ -> this, value -> predicate.test(value) ? this : failure(causeMapper.apply(value)));
+    }
+
+    @SafeVarargs
+    static <C, R> Result<R> combine(Function1<R, List<C>> combiner, Result<C>@NotNull... results) {
+        List<Cause> failures = new ArrayList<>();
+        List<C> values = new ArrayList<>();
+
+        Arrays.stream(results).forEach(result -> result.apply(failures::add, values::add));
+
+        return failures.isEmpty()
+                ? success(combiner.apply(values))
+                : failure(new AggregatedCause(failures));
+    }
+
+    @SafeVarargs
+    static <R> Result<R> combine(Operator2<R> combiner, Result<R>@NotNull... results) {
+        List<Cause> failures = new ArrayList<>();
+        List<R> values = new ArrayList<>();
+
+        Arrays.stream(results).forEach(result -> result.apply(failures::add, values::add));
+
+        return failures.isEmpty()
+                ? lift(() -> values.stream().reduce(combiner.operator()).orElseThrow())
+                : failure(new AggregatedCause(failures));
+    }
+
+    static <T> Result<List<T>> sequence(@NotNull List<Result<T>> results) {
+        return results.stream()
+                .reduce(Result.success(new ArrayList<>()),
+                        (acc, result) -> acc.flatMap(list -> result.map(value -> {
+                            list.add(value);
+                            return list;
+                        })), (res1, res2) -> {
+                    throw new UnsupportedOperationException("Parallel Stream not supported!");
+                }
+        );
     }
 
     // ----- Mapper Methods -----

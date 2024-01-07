@@ -59,7 +59,7 @@ public sealed interface Timeout extends Comparable<Timeout> {
     // ----- Duration and Comparing -----
 
     default Duration duration() {
-        return secondsAndNanos().map(Duration::ofSeconds);
+        return secondsAndNanos().map(Duration::ofSeconds).orThrow();
     }
 
     @Override

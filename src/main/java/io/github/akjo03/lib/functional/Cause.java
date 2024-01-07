@@ -1,5 +1,7 @@
 package io.github.akjo03.lib.functional;
 
+import io.github.akjo03.lib.functional.async.Promise;
+
 /*
  *  Copyright (c) 2023 Sergiy Yevtushenko.
  *  Copyright (c) 2024 Lukas Küffer.
@@ -32,5 +34,9 @@ public interface Cause {
 
     default <T> Result<T> result() {
         return Result.failure(this);
+    }
+
+    default <T> Promise<T> promise() {
+        return Promise.failed(this);
     }
 }

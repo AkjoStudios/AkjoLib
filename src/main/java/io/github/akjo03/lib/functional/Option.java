@@ -2,6 +2,7 @@ package io.github.akjo03.lib.functional;
 
 import io.github.akjo03.lib.functional.Option.None;
 import io.github.akjo03.lib.functional.Option.Some;
+import io.github.akjo03.lib.functional.async.Promise;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,7 @@ import static io.github.akjo03.lib.functional.OptionMappers.*;
  *  This code was ported and modified from the project Pragmatica.
  *  See https://github.com/siy/pragmatica/blob/b05a6985c1b4277f15ca6d7319334d721a33f8b8/core/src/main/java/org/pragmatica/lang/Option.java
  */
-@SuppressWarnings({"unused", "java:S125", "UnusedReturnValue"})
+@SuppressWarnings({"unused", "java:S125", "UnusedReturnValue", "SameReturnValue"})
 public sealed interface Option<T> permits Some, None {
     // ----- None Constant -----
 
@@ -213,7 +214,11 @@ public sealed interface Option<T> permits Some, None {
     // ----- Transformational Methods -----
 
     default <U> Option<U> map(Functions.Function1<U, ? super T> mapper) {
-        return fold(Option::empty, value -> present(mapper.apply(value)));
+        return fold(Option::empty, value -> Result.lift(() -> mapper.apply(value)).toOption());
+    }
+
+    default <U> Option<U> map(Cause cause, Functions.Function1<U, ? super T> mapper) {
+        return fold(Option::empty, value -> Result.lift(cause, () -> mapper.apply(value)).toOption());
     }
 
     default <U> Option<U> flatMap(Functions.Function1<Option<U>, ? super T> mapper) {
@@ -234,6 +239,10 @@ public sealed interface Option<T> permits Some, None {
 
     default Optional<T> toOptional() {
         return fold(Optional::empty, Optional::of);
+    }
+
+    default Promise<T> toPromise(@NotNull Cause cause) {
+        return fold(cause::promise, Promise::successful);
     }
 
     // ----- Conditional Methods -----

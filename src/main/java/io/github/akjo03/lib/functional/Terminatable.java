@@ -16,7 +16,7 @@ package io.github.akjo03.lib.functional;
  *  limitations under the License.
  */
 @FunctionalInterface
-@SuppressWarnings({"unused", "java:S125", "java:S112"})
+@SuppressWarnings({"unused", "java:S125", "java:S112", "RedundantThrows"})
 public interface Terminatable {
     void terminate() throws Exception;
 }

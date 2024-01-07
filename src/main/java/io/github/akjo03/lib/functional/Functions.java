@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /*
  *  Copyright (c) 2023 Sergiy Yevtushenko.
@@ -112,6 +114,11 @@ public interface Functions {
     }
 
     @FunctionalInterface
+    interface Operator1<T> extends Function1<T, T> {
+        default UnaryOperator<T> operator() { return this::apply; }
+    }
+
+    @FunctionalInterface
     interface Function2<R, T1, T2> {
         R apply(T1 param1, T2 param2);
 
@@ -128,6 +135,11 @@ public interface Functions {
                     t2
             ));
         }
+    }
+
+    @FunctionalInterface
+    interface Operator2<T> extends Function2<T, T, T> {
+        default BinaryOperator<T> operator() { return this::apply; }
     }
 
     @FunctionalInterface
@@ -149,6 +161,11 @@ public interface Functions {
                     param3
             ));
         }
+    }
+
+    @FunctionalInterface
+    interface Operator3<T> extends Function3<T, T, T, T> {
+        T apply(T param1, T param2, T param3);
     }
 
     @FunctionalInterface
@@ -175,6 +192,11 @@ public interface Functions {
     }
 
     @FunctionalInterface
+    interface Operator4<T> extends Function4<T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4);
+    }
+
+    @FunctionalInterface
     interface Function5<R, T1, T2, T3, T4, T5> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5);
 
@@ -197,6 +219,11 @@ public interface Functions {
                     param5
             ));
         }
+    }
+
+    @FunctionalInterface
+    interface Operator5<T> extends Function5<T, T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4, T param5);
     }
 
     @FunctionalInterface
@@ -227,6 +254,11 @@ public interface Functions {
     }
 
     @FunctionalInterface
+    interface Operator6<T> extends Function6<T, T, T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4, T param5, T param6);
+    }
+
+    @FunctionalInterface
     interface Function7<R, T1, T2, T3, T4, T5, T6, T7> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7);
 
@@ -253,6 +285,11 @@ public interface Functions {
                     param7
             ));
         }
+    }
+
+    @FunctionalInterface
+    interface Operator7<T> extends Function7<T, T, T, T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4, T param5, T param6, T param7);
     }
 
     @FunctionalInterface
@@ -288,6 +325,11 @@ public interface Functions {
     }
 
     @FunctionalInterface
+    interface Operator8<T> extends Function8<T, T, T, T, T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4, T param5, T param6, T param7, T param8);
+    }
+
+    @FunctionalInterface
     interface Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> {
         @SuppressWarnings("java:S107")
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9);
@@ -319,6 +361,11 @@ public interface Functions {
                     param9
             ));
         }
+    }
+
+    @FunctionalInterface
+    interface Operator9<T> extends Function9<T, T, T, T, T, T, T, T, T, T> {
+        T apply(T param1, T param2, T param3, T param4, T param5, T param6, T param7, T param8, T param9);
     }
 
     // ----- Identity and Unit Methods -----

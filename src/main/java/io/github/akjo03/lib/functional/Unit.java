@@ -140,8 +140,9 @@ public final class Unit implements Tuple0 {
         return 0;
     }
 
+    @Contract("_ -> new")
     @Override
-    public <T> T map(@NotNull Functions.Function0<T> mapper) {
-        return mapper.apply();
+    public <T> @NotNull Result<T> map(@NotNull Functions.Function0<T> mapper) {
+        return Result.success(mapper.apply());
     }
 }
