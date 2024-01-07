@@ -5,9 +5,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 
 /*
  *  Copyright (c) 2023 Sergiy Yevtushenko.
@@ -97,6 +95,32 @@ public interface Functions {
     interface Function1<R, T1> {
         R apply(T1 param1);
 
+        @Contract(pure = true)
+        static <R, T1> @NotNull Function1<R, T1> of(
+                R value
+        ) { return param1 -> value; }
+
+        @Contract(pure = true)
+        static <R, T1> @NotNull Function1<R, T1> of(
+                @NotNull Function0<R> function
+        ) { return __ -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1> @NotNull Function1<R, T1> of(
+                @NotNull Function<T1, R> function
+        ) { return function::apply; }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1> @NotNull Function1<R, T1> of(
+                @NotNull ThrowingFunction1<R, T1> function
+        ) {
+            return param1 -> {
+                try { return function.apply(param1); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
+
         default <N> Function1<N, T1> then(Function1<N, R> function) {
             return value -> function.apply(apply(
                     value
@@ -122,6 +146,37 @@ public interface Functions {
     interface Function2<R, T1, T2> {
         R apply(T1 param1, T2 param2);
 
+        @Contract(pure = true)
+        static <R, T1, T2> @NotNull Function2<R, T1, T2> of(
+                R value
+        ) { return (param1, param2) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2> @NotNull Function2<R, T1, T2> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2> @NotNull Function2<R, T1, T2> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2> @NotNull Function2<R, T1, T2> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return function::apply; }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2> @NotNull Function2<R, T1, T2> of(
+                @NotNull ThrowingFunction2<R, T1, T2> function
+        ) {
+            return (param1, param2) -> {
+                try { return function.apply(param1, param2); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
+
         default Function1<R, T2> bind(T1 param1) {
             return param2 -> apply(
                     param1,
@@ -145,6 +200,37 @@ public interface Functions {
     @FunctionalInterface
     interface Function3<R, T1, T2, T3> {
         R apply(T1 param1, T2 param2, T3 param3);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3> @NotNull Function3<R, T1, T2, T3> of(
+                R value
+        ) { return (param1, param2, param3) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3> @NotNull Function3<R, T1, T2, T3> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3> @NotNull Function3<R, T1, T2, T3> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3> @NotNull Function3<R, T1, T2, T3> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3> @NotNull Function3<R, T1, T2, T3> of(
+                @NotNull ThrowingFunction3<R, T1, T2, T3> function
+        ) {
+            return (param1, param2, param3) -> {
+                try { return function.apply(param1, param2, param3); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function2<R, T2, T3> bind(T1 param1) {
             return (param2, param3) -> apply(
@@ -171,6 +257,37 @@ public interface Functions {
     @FunctionalInterface
     interface Function4<R, T1, T2, T3, T4> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4> @NotNull Function4<R, T1, T2, T3, T4> of(
+                R value
+        ) { return (param1, param2, param3, param4) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4> @NotNull Function4<R, T1, T2, T3, T4> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4> @NotNull Function4<R, T1, T2, T3, T4> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4> @NotNull Function4<R, T1, T2, T3, T4> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4> @NotNull Function4<R, T1, T2, T3, T4> of(
+                @NotNull ThrowingFunction4<R, T1, T2, T3, T4> function
+        ) {
+            return (param1, param2, param3, param4) -> {
+                try { return function.apply(param1, param2, param3, param4); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function3<R, T2, T3, T4> bind(T1 param1) {
             return (param2, param3, param4) -> apply(
@@ -199,6 +316,37 @@ public interface Functions {
     @FunctionalInterface
     interface Function5<R, T1, T2, T3, T4, T5> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5> @NotNull Function5<R, T1, T2, T3, T4, T5> of(
+                R value
+        ) { return (param1, param2, param3, param4, param5) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5> @NotNull Function5<R, T1, T2, T3, T4, T5> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4, param5) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5> @NotNull Function5<R, T1, T2, T3, T4, T5> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4, param5) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5> @NotNull Function5<R, T1, T2, T3, T4, T5> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4, param5) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4, T5> @NotNull Function5<R, T1, T2, T3, T4, T5> of(
+                @NotNull ThrowingFunction5<R, T1, T2, T3, T4, T5> function
+        ) {
+            return (param1, param2, param3, param4, param5) -> {
+                try { return function.apply(param1, param2, param3, param4, param5); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function4<R, T2, T3, T4, T5> bind(T1 param1) {
             return (param2, param3, param4, param5) -> apply(
@@ -229,6 +377,37 @@ public interface Functions {
     @FunctionalInterface
     interface Function6<R, T1, T2, T3, T4, T5, T6> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6> @NotNull Function6<R, T1, T2, T3, T4, T5, T6> of(
+                R value
+        ) { return (param1, param2, param3, param4, param5, param6) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6> @NotNull Function6<R, T1, T2, T3, T4, T5, T6> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4, param5, param6) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6> @NotNull Function6<R, T1, T2, T3, T4, T5, T6> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4, param5, param6) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6> @NotNull Function6<R, T1, T2, T3, T4, T5, T6> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4, param5, param6) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4, T5, T6> @NotNull Function6<R, T1, T2, T3, T4, T5, T6> of(
+                @NotNull ThrowingFunction6<R, T1, T2, T3, T4, T5, T6> function
+        ) {
+            return (param1, param2, param3, param4, param5, param6) -> {
+                try { return function.apply(param1, param2, param3, param4, param5, param6); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function5<R, T2, T3, T4, T5, T6> bind(T1 param1) {
             return (param2, param3, param4, param5, param6) -> apply(
@@ -261,6 +440,37 @@ public interface Functions {
     @FunctionalInterface
     interface Function7<R, T1, T2, T3, T4, T5, T6, T7> {
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7> @NotNull Function7<R, T1, T2, T3, T4, T5, T6, T7> of(
+                R value
+        ) { return (param1, param2, param3, param4, param5, param6, param7) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7> @NotNull Function7<R, T1, T2, T3, T4, T5, T6, T7> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7> @NotNull Function7<R, T1, T2, T3, T4, T5, T6, T7> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7> @NotNull Function7<R, T1, T2, T3, T4, T5, T6, T7> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4, T5, T6, T7> @NotNull Function7<R, T1, T2, T3, T4, T5, T6, T7> of(
+                @NotNull ThrowingFunction7<R, T1, T2, T3, T4, T5, T6, T7> function
+        ) {
+            return (param1, param2, param3, param4, param5, param6, param7) -> {
+                try { return function.apply(param1, param2, param3, param4, param5, param6, param7); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function6<R, T2, T3, T4, T5, T6, T7> bind(T1 param1) {
             return (param2, param3, param4, param5, param6, param7) -> apply(
@@ -296,6 +506,37 @@ public interface Functions {
     interface Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> {
         @SuppressWarnings("java:S107")
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8> @NotNull Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> of(
+                R value
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8> @NotNull Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8> @NotNull Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8> @NotNull Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8> @NotNull Function8<R, T1, T2, T3, T4, T5, T6, T7, T8> of(
+                @NotNull ThrowingFunction8<R, T1, T2, T3, T4, T5, T6, T7, T8> function
+        ) {
+            return (param1, param2, param3, param4, param5, param6, param7, param8) -> {
+                try { return function.apply(param1, param2, param3, param4, param5, param6, param7, param8); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function7<R, T2, T3, T4, T5, T6, T7, T8> bind(T1 param1) {
             return (param2, param3, param4, param5, param6, param7, param8) -> apply(
@@ -333,6 +574,37 @@ public interface Functions {
     interface Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> {
         @SuppressWarnings("java:S107")
         R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9);
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> @NotNull Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> of(
+                R value
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8, param9) -> value; }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> @NotNull Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> of(
+                @NotNull Function0<R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8, param9) -> function.apply(); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> @NotNull Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> of(
+                @NotNull Function<T1, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8, param9) -> function.apply(param1); }
+
+        @Contract(pure = true)
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> @NotNull Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> of(
+                @NotNull BiFunction<T1, T2, R> function
+        ) { return (param1, param2, param3, param4, param5, param6, param7, param8, param9) -> function.apply(param1, param2); }
+
+        @Contract(pure = true)
+        @SuppressWarnings("java:S112")
+        static <R, T1, T2, T3, T4, T5, T6, T7, T8, T9> @NotNull Function9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> of(
+                @NotNull ThrowingFunction9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> function
+        ) {
+            return (param1, param2, param3, param4, param5, param6, param7, param8, param9) -> {
+                try { return function.apply(param1, param2, param3, param4, param5, param6, param7, param8, param9); }
+                catch (Throwable throwable) { throw new RuntimeException(throwable); }
+            };
+        }
 
         default Function8<R, T2, T3, T4, T5, T6, T7, T8, T9> bind(T1 param1) {
             return (param2, param3, param4, param5, param6, param7, param8, param9) -> apply(
@@ -476,6 +748,62 @@ public interface Functions {
     @FunctionalInterface
     interface TriConsumer<T1, T2, T3> {
         void accept(T1 param1, T2 param2, T3 param3);
+    }
+
+    // ----- Throwing Function Variants (1-9) -----
+
+    @FunctionalInterface
+    interface ThrowingFunction1<R, T1> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction2<R, T1, T2> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction3<R, T1, T2, T3> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2, T3 param3) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction4<R, T1, T2, T3, T4> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction5<R, T1, T2, T3, T4, T5> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction6<R, T1, T2, T3, T4, T5, T6> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction7<R, T1, T2, T3, T4, T5, T6, T7> {
+        @SuppressWarnings({"RedundantThrows", "java:S112"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction8<R, T1, T2, T3, T4, T5, T6, T7, T8> {
+        @SuppressWarnings({"RedundantThrows", "java:S112", "java:S107"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8) throws Throwable;
+    }
+
+    @FunctionalInterface
+    interface ThrowingFunction9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> {
+        @SuppressWarnings({"RedundantThrows", "java:S112", "java:S107"})
+        R apply(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9) throws Throwable;
     }
 
     // ----- Variable Function Variant -----

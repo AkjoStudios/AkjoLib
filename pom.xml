@@ -6,8 +6,10 @@
 
     <groupId>io.github.akjo03</groupId>
     <artifactId>AkjoLib</artifactId>
+    <version>0.3.0</version>
+    <packaging>jar</packaging>
 
-    <version>0.2.0</version>
+    <name>AkjoLib</name>
     <inceptionYear>2023</inceptionYear>
 
     <properties>
